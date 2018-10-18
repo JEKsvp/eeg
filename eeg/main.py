@@ -9,6 +9,7 @@ bytes_in_value = 2
 number_of_channels = 4
 sampling_frequency = 512.62335
 frame_duration = 100  # in seconds
+spec_max_frequency = 150  # in seconds
 
 channels = dbuilder.build_channels(file, offset, bytes_in_value, number_of_channels, sampling_frequency, frame_duration)
 
@@ -21,10 +22,10 @@ custom_plt.plot_signal(axes[1, 0], channels[1], range_between_points)
 custom_plt.plot_signal(axes[2, 0], channels[2], range_between_points)
 custom_plt.plot_signal(axes[3, 0], channels[3], range_between_points)
 
-custom_plt.custom_specgram(axes[0, 1], channels[0], sampling_frequency, 150)
-custom_plt.custom_specgram(axes[1, 1], channels[1], sampling_frequency, 150)
-custom_plt.custom_specgram(axes[2, 1], channels[2], sampling_frequency, 150)
-custom_plt.custom_specgram(axes[3, 1], channels[3], sampling_frequency, 150)
+custom_plt.custom_specgram(axes[0, 1], channels[0], sampling_frequency, spec_max_frequency)
+custom_plt.custom_specgram(axes[1, 1], channels[1], sampling_frequency, spec_max_frequency)
+custom_plt.custom_specgram(axes[2, 1], channels[2], sampling_frequency, spec_max_frequency)
+custom_plt.custom_specgram(axes[3, 1], channels[3], sampling_frequency, spec_max_frequency)
 
 vars0 = dbuilder.build_vars(channels[0], int(sampling_frequency))
 vars1 = dbuilder.build_vars(channels[1], int(sampling_frequency))
