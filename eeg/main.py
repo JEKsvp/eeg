@@ -1,19 +1,8 @@
+from eeg.init_values import *
 import matplotlib.pyplot as plt
 import eeg.data_builder as dbuilder
 import eeg.plotter as custom_plt
 import numpy as np
-
-file = open('../data/rat22agonist12mg.wdq', 'rb')
-offset = 2  # offset in frames
-bytes_in_value = 2
-number_of_channels = 4
-sampling_frequency = 512.62335
-frame_duration = 100  # in seconds
-spec_max_frequency = 150  # in seconds
-
-channels = dbuilder.build_channels(file, offset, bytes_in_value, number_of_channels, sampling_frequency, frame_duration)
-
-range_between_points = 1 / sampling_frequency
 
 figure, axes = plt.subplots(nrows=4, ncols=3)
 figure.subplots_adjust(hspace=1.0, wspace=.6)

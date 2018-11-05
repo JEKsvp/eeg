@@ -34,3 +34,17 @@ def build_vars(points, group_size):
         result.append(var)
         current_start_cut += group_size
     return result
+
+
+def build_max_frequencies(points, sampling_frequency):
+    points_in_second = int(sampling_frequency)
+    seconds = int(len(points) / sampling_frequency)
+    result = []
+    offset = 0
+    for i in range(seconds):
+        fft_vals = np.fft.fft(points[offset:offset + points_in_second])
+        offset += points_in_second
+        fft_theo = 2.0 * np.abs(fft_vals.real / points_in_second)
+        max_freq = np.argmax(fft_theo[0:  50])
+        result.append(max_freq)
+    return np.array(result)
