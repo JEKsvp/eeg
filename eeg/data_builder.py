@@ -27,27 +27,49 @@ def build_channels(file, offset, bytes_in_value, number_of_channels, sampling_fr
     return result_dict
 
 
-def build_vars(points, group_size):
-    result_size = int(len(points) / group_size)
+def build_vars(points, sampling_frequency, frame_duration):
     result = []
     current_start_cut = 0
-    for i in range(result_size):
-        var = np.var(points[current_start_cut: current_start_cut + group_size])
+    for i in range(frame_duration):
+        var = np.var(points[current_start_cut: current_start_cut + sampling_frequency])
         result.append(var)
-        current_start_cut += group_size
+        current_start_cut += sampling_frequency
     return result
 
 
 def build_max_frequencies(points, sampling_frequency):
-    f, t, Sxx = signal.spectrogram(np.array(points), fs=sampling_frequency)
+    f, t, Sxx = signal.spectrogram(np.array(points), fs=sampling_frequency, nperseg=int(sampling_frequency))
     result = []
     width = len(Sxx[0])
     for i in range(width):
         freqs = column(Sxx, i)
-        maxFreq = np.max(freqs)
+        maxFreq = np.argmax(freqs)
         result.append(maxFreq)
     return [t, np.array(result)]
 
 
 def column(matrix, i):
     return [row[i] for row in matrix]
+
+
+def custom_fft(points, sampling_frequency):
+    n = len(points)
+    freqs = np.fft.fftfreq(n, d=1. / sampling_frequency)
+    mask = freqs > 0
+    fft_vals = np.fft.fft(points)
+    fft_theo = 2.0 * np.abs(fft_vals / n)
+    return [freqs[mask], fft_theo[mask]]
+
+
+def max_frequencies_with_float_window(points, sampling_frequency, window_size, step):
+    seconds = int((len(points) / sampling_frequency))
+    offset = 0
+    result = {"t": [], "max_freq": []}
+    while offset + window_size < seconds:
+        result["t"].append(offset)
+        freqs, vals = custom_fft(points[int(offset * sampling_frequency): int(
+            offset * sampling_frequency + sampling_frequency * window_size)], sampling_frequency)
+        max_freq = freqs[vals.argmax()]
+        result["max_freq"].append(max_freq)
+        offset += step
+    return np.array(result["t"]), np.array(result["max_freq"])
