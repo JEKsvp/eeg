@@ -15,7 +15,7 @@ def plot_signal(axes, points, sampling_frequency):
         current += range_between_points
     axes.plot(np.array(t) + (frame_duration * offset), points)
     axes.set_xlabel('t, s')
-    axes.set_ylabel('U, V')
+    axes.set_ylabel('U, mV')
 
 
 def plot_var(axes, points, t):

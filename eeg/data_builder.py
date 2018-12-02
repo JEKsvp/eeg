@@ -57,7 +57,7 @@ def custom_fft(points, sampling_frequency):
     freqs = np.fft.fftfreq(n, d=1. / sampling_frequency)
     mask = freqs > 0
     fft_vals = np.fft.fft(points)
-    fft_theo = 2.0 * np.abs(fft_vals / n)
+    fft_theo = np.abs(fft_vals / n)
     return [freqs[mask], fft_theo[mask]]
 
 
@@ -73,3 +73,12 @@ def max_frequencies_with_float_window(points, sampling_frequency, window_size, s
         result["max_freq"].append(max_freq)
         offset += step
     return np.array(result["t"]), np.array(result["max_freq"])
+
+
+def high_filter(points, sampling_frequency, freq):
+    n = len(points)
+    freqs = np.fft.fftfreq(n, d=1. / sampling_frequency)
+    mask = freqs > freq
+    fft_vals = np.fft.fft(points)
+    s = np.fft.ifft(fft_vals[mask])
+    return s
