@@ -75,10 +75,23 @@ def max_frequencies_with_float_window(points, sampling_frequency, window_size, s
     return np.array(result["t"]), np.array(result["max_freq"])
 
 
+def butter_highpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
+    return b, a
+
+
+def butter_highpass_filter(data, fs, cutoff, order=5):
+    b, a = butter_highpass(cutoff, fs, order=order)
+    y = signal.filtfilt(b, a, data)
+    return y
+
+
 def high_filter(points, sampling_frequency, freq):
     n = len(points)
     freqs = np.fft.fftfreq(n, d=1. / sampling_frequency)
     mask = freqs > freq
     fft_vals = np.fft.fft(points)
-    s = np.fft.ifft(fft_vals[mask])
+    s = np.fft.ifft(fft_vals[mask] * 2)
     return s
