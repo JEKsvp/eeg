@@ -62,12 +62,15 @@ def custom_fft(points, sampling_frequency):
 
 
 def max_frequencies_with_float_window(points, sampling_frequency, window_size, step):
-    seconds = int((len(points) / sampling_frequency))
+    seconds = int((len(points) / sampling_frequency)) + window_size
+    filled_points = points.copy().tolist()
+    for i in range(int(sampling_frequency * window_size)):
+        filled_points.append(0)
     offset = 0
     result = {"t": [], "max_freq": []}
     while offset + window_size < seconds:
         result["t"].append(offset)
-        freqs, vals = custom_fft(points[int(offset * sampling_frequency): int(
+        freqs, vals = custom_fft(filled_points[int(offset * sampling_frequency): int(
             offset * sampling_frequency + sampling_frequency * window_size)], sampling_frequency)
         max_freq = freqs[vals.argmax()]
         result["max_freq"].append(max_freq)
